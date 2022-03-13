@@ -3,6 +3,7 @@ import {filtersView} from './view/Filters';
 import {sortView} from './view/Sort';
 import {waypointView} from './view/Waypoint';
 import {creationFormView} from './view/CreationForm';
+import {createRandomWaypoint} from './waypoint';
 
 const render = (component, container, place) => {
   const fragment = container.querySelector(place) || container;
@@ -25,31 +26,20 @@ render(sortModel.getElement(), tripEvents);
 tripEventsList.classList.add('trip-events__list');
 render(tripEventsList, tripEvents);
 
+const waypointModels = [];
+for (let i = 0; i < 20; i++) {
+  waypointModels.push(createRandomWaypoint());
+}
+
 const formModel = creationFormView();
 const formParams = {
   isCreationForm: true
 };
-render(formModel.getElement(formParams), tripEventsList);
+render(formModel.getElement({...waypointModels[0], ...formParams}), tripEventsList);
 
 const waypointsModel = [
   waypointView(),
   waypointView(),
   waypointView(),
 ];
-const waypointParams = {
-  date: '2022-01-01',
-  event: 'Taxi Amsterdam',
-  time: {
-    start: '2022-01-01 10:30',
-    end: '2022-01-01 11:30'
-  },
-  price: '20',
-  offers: [
-    {
-      title: 'Uber Order',
-      price: '20'
-    },
-  ]
-};
-
-waypointsModel.forEach((waypointModel) => render(waypointModel.getElement(waypointParams), tripEventsList));
+waypointsModel.forEach((waypointModel, i) => render(waypointModel.getElement(waypointModels[i]), tripEventsList));
