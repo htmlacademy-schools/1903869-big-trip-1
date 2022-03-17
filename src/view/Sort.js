@@ -1,13 +1,12 @@
-const createElement = (template) => {
-  const newElement = document.createElement('div');
-  newElement.innerHTML = template;
-  return newElement.firstElementChild;
-};
+import {createElement} from '../utils';
 
-export const sortView = () => {
-  let element = null;
+export class Sort {
+  constructor () {
+    this.element = null;
+  }
 
-  const getTemplate = () => `
+  getTemplate () {
+    return `
     <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       <div class="trip-sort__item  trip-sort__item--day">
         <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day" checked>
@@ -34,17 +33,13 @@ export const sortView = () => {
         <label class="trip-sort__btn" for="sort-offer">Offers</label>
       </div>
     </form>
-  `;
+  `;}
 
-  const getElement = () => {
-    if (!element) {
-      element = createElement(getTemplate());
+  get getElement () {
+    if (!this.element) {
+      this.element = createElement(this.getTemplate());
     }
 
-    return element;
-  };
-
-  return {
-    getElement
-  };
-};
+    return this.element;
+  }
+}

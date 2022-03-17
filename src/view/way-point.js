@@ -1,20 +1,28 @@
 import dayjs from 'dayjs';
+import {createElement} from '../utils';
 
-const createElement = (template) => {
-  const newElement = document.createElement('div');
-  newElement.innerHTML = template;
-  return newElement.firstElementChild;
-};
+export class Waypoint {
+  constructor ({date, type, destination, time, price, offers = []}) {
+    this.element = null;
 
-export const waypointView = () => {
-  let element = null;
+    this.state = {
+      date: date,
+      type: type,
+      destination: destination,
+      time: time,
+      price: price,
+      offers: offers
+    };
+  }
 
   // date: string
   // event: string
   // time: {start: string, end: string}
   // price: string
   // offers: {title: string, price: string}[]
-  const getTemplate = ({date, type, destination, time, price, offers = []}) => `
+  getTemplate () {
+    const {date, type, destination, time, price, offers} = this.state;
+    return `
       <li class="trip-events__item">
         <div class="event">
           <time class="event__date" datetime="${dayjs(date).format('YYYY-MM-DD')}">${dayjs(date).format( ' MMM D')}</time>
@@ -57,17 +65,13 @@ export const waypointView = () => {
           </button>
         </div>
       </li>
-  `;
+  `;}
 
-  const getElement = (args) => {
-    if (!element) {
-      element = createElement(getTemplate(args));
+  get getElement () {
+    if (!this.element) {
+      this.element = createElement(this.getTemplate());
     }
 
-    return element;
-  };
-
-  return {
-    getElement
-  };
-};
+    return this.element;
+  }
+}

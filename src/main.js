@@ -1,8 +1,8 @@
-import {menuView} from './view/menu';
-import {filtersView} from './view/filters';
-import {sortView} from './view/sort';
-import {waypointView} from './view/way-point';
-import {creationFormView} from './view/creation-form';
+import {Menu} from './view/menu';
+import {Filters} from './view/filters';
+import {Sort} from './view/sort';
+import {Waypoint} from './view/way-point';
+import {CreationForm} from './view/creation-form';
 import {createRandomWaypoint} from './way-point';
 
 const render = (component, container, place) => {
@@ -14,14 +14,14 @@ const tripControls = document.querySelector('.trip-controls');
 const tripEvents = document.querySelector('.trip-events');
 const tripEventsList = document.createElement('ul');
 
-const menuModel = menuView();
-render(menuModel.getElement(), tripControls, '.trip-controls__navigation');
+const menuModel = new Menu();
+render(menuModel.getElement, tripControls, '.trip-controls__navigation');
 
-const filtersModel = filtersView();
-render(filtersModel.getElement(), tripControls, '.trip-controls__filters');
+const filtersModel = new Filters();
+render(filtersModel.getElement, tripControls, '.trip-controls__filters');
 
-const sortModel = sortView();
-render(sortModel.getElement(), tripEvents);
+const sortModel = new Sort();
+render(sortModel.getElement, tripEvents);
 
 tripEventsList.classList.add('trip-events__list');
 render(tripEventsList, tripEvents);
@@ -31,15 +31,19 @@ for (let i = 0; i < 20; i++) {
   waypointModels.push(createRandomWaypoint());
 }
 
-const formModel = creationFormView();
-const formParams = {
-  isCreationForm: true
-};
-render(formModel.getElement({...waypointModels[0], ...formParams}), tripEventsList);
+for (let i = 0; i < 3; i++) {
+  const creationForm = new CreationForm(waypointModels[i]);
+  const waypoint = new Waypoint(waypointModels[i]);
 
-const waypointsModel = [
-  waypointView(),
-  waypointView(),
-  waypointView(),
-];
-waypointsModel.forEach((waypointModel, i) => render(waypointModel.getElement(waypointModels[i]), tripEventsList));
+  const button = waypoint.getElement.querySelector('button.event__rollup-btn');
+  button.addEventListener('click', () => {
+    tripEventsList.replaceChild(creationForm.getElement, waypoint.getElement);
+  });
+
+  const form = creationForm.getElement.querySelector('form');
+  form.addEventListener('submit', () => {
+    tripEventsList.replaceChild(waypoint.getElement, creationForm.getElement);
+  });
+
+  render(waypoint.getElement, tripEventsList);
+}
