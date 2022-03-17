@@ -20,30 +20,47 @@ render(menuModel.getElement, tripControls, '.trip-controls__navigation');
 const filtersModel = new Filters();
 render(filtersModel.getElement, tripControls, '.trip-controls__filters');
 
-const sortModel = new Sort();
-render(sortModel.getElement, tripEvents);
+const waypointCount = 20;
 
-tripEventsList.classList.add('trip-events__list');
-render(tripEventsList, tripEvents);
+if (waypointCount) {
+  const waypointModels = [];
+  for (let i = 0; i < 20; i++) {
+    waypointModels.push(createRandomWaypoint());
+  }
 
-const waypointModels = [];
-for (let i = 0; i < 20; i++) {
-  waypointModels.push(createRandomWaypoint());
-}
+  const sortModel = new Sort();
+  render(sortModel.getElement, tripEvents);
 
-for (let i = 0; i < 3; i++) {
-  const creationForm = new CreationForm(waypointModels[i]);
-  const waypoint = new Waypoint(waypointModels[i]);
+  tripEventsList.classList.add('trip-events__list');
+  render(tripEventsList, tripEvents);
 
-  const button = waypoint.getElement.querySelector('button.event__rollup-btn');
-  button.addEventListener('click', () => {
-    tripEventsList.replaceChild(creationForm.getElement, waypoint.getElement);
-  });
+  for (let i = 0; i < waypointCount; i++) {
+    const creationForm = new CreationForm(waypointModels[i]);
+    const waypoint = new Waypoint(waypointModels[i]);
 
-  const form = creationForm.getElement.querySelector('form');
-  form.addEventListener('submit', () => {
-    tripEventsList.replaceChild(waypoint.getElement, creationForm.getElement);
-  });
+    const buttonUp = waypoint.getElement.querySelector('button.event__rollup-btn');
+    buttonUp.addEventListener('click', () => {
+      tripEventsList.replaceChild(creationForm.getElement, waypoint.getElement);
+    });
 
-  render(waypoint.getElement, tripEventsList);
+    const form = creationForm.getElement.querySelector('form');
+    form.addEventListener('submit', () => {
+      tripEventsList.replaceChild(waypoint.getElement, creationForm.getElement);
+    });
+
+    const buttonDown = creationForm.getElement.querySelector('button.event__rollup-btn');
+    buttonDown.addEventListener('click', () => {
+      tripEventsList.replaceChild(waypoint.getElement, creationForm.getElement);
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && tripEventsList.contains(creationForm.getElement)) {
+        tripEventsList.replaceChild(waypoint.getElement, creationForm.getElement);
+      }
+    });
+
+    render(waypoint.getElement, tripEventsList);
+  }
+} else {
+  render(emptyListElement, tripEvents);
 }
