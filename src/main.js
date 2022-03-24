@@ -1,9 +1,9 @@
-import {menuView} from './view/Menu';
-import {filtersView} from './view/Filters';
-import {sortView} from './view/Sort';
-import {waypointView} from './view/Waypoint';
-import {creationFormView} from './view/CreationForm';
-import {createRandomWaypoint} from './waypoint';
+import {menuView} from './view/menu';
+import {filtersView} from './view/filters';
+import {sortView} from './view/sort';
+import {waypointView} from './view/way-point';
+import {creationFormView} from './view/creation-form';
+import {createRandomWaypoint} from './way-point';
 
 const render = (component, container, place) => {
   const fragment = container.querySelector(place) || container;
