@@ -1,13 +1,11 @@
-const createElement = (template) => {
-  const newElement = document.createElement('div');
-  newElement.innerHTML = template;
-  return newElement.firstElementChild;
-};
+import {createElement} from '../utils';
 
-export const filtersView = () => {
-  let element = null;
+export class Filters {
+  constructor () {
+    this.element = null;
+  }
 
-  const getTemplate = () => `
+  getTemplate () { return `
     <form class="trip-filters" action="#" method="get">
       <div class="trip-filters__filter">
         <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything">
@@ -26,17 +24,13 @@ export const filtersView = () => {
 
       <button class="visually-hidden" type="submit">Accept filter</button>
     </form>
-  `;
+  `;}
 
-  const getElement = () => {
-    if (!element) {
-      element = createElement(getTemplate());
+  get getElement () {
+    if (!this.element) {
+      this.element = createElement(this.getTemplate());
     }
 
-    return element;
-  };
-
-  return {
-    getElement
-  };
-};
+    return this.element;
+  }
+}
