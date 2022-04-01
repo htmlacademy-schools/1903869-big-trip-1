@@ -3,3 +3,5 @@ export const createElement = (template) => {
   newElement.innerHTML = template;
   return newElement.firstElementChild;
 };
+
+export const emptyListElement = createElement('<p class="trip-events__msg">Click New Event to create your first point</p>');
