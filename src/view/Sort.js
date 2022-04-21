@@ -1,10 +1,6 @@
-import {createElement} from '../utils';
+import { AbstractComponent } from '../abstract-view';
 
-export class Sort {
-  constructor () {
-    this.element = null;
-  }
-
+export class Sort extends AbstractComponent {
   getTemplate () {
     return `
     <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
@@ -34,12 +30,4 @@ export class Sort {
       </div>
     </form>
   `;}
-
-  get getElement () {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
 }

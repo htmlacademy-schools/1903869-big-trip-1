@@ -1,29 +1,17 @@
+import { AbstractComponent } from '../abstract-view';
 import {OFFER_TYPES} from '../consts';
-import {createElement} from '../utils';
 
-export class CreationForm {
-  constructor ({isCreationForm, destination, type, offers, price}) {
-    this.element = null;
+export class CreationForm extends AbstractComponent {
+  addEventListeners (waypoint, tripEventsList) {
+    const form = this.getElement.querySelector('form');
+    form.addEventListener('submit', () => {
+      tripEventsList.replaceChild(waypoint, this.getElement);
+    });
 
-    this.state = {
-      isCreationForm: isCreationForm,
-      destination: destination,
-      type: type,
-      offers: offers,
-      price: price,
-    };
-  }
-
-  get getElement () {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  deleteElement () {
-    this.element = null;
+    const buttonDown = this.getElement.querySelector('button.event__rollup-btn');
+    buttonDown.addEventListener('click', () => {
+      tripEventsList.replaceChild(waypoint, this.getElement);
+    });
   }
 
   getTemplate () {
