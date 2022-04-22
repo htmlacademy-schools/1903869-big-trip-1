@@ -1,18 +1,12 @@
 import dayjs from 'dayjs';
-import {createElement} from '../utils';
+import { AbstractComponent } from '../abstract-view';
 
-export class Waypoint {
-  constructor ({date, type, destination, time, price, offers = []}) {
-    this.element = null;
-
-    this.state = {
-      date: date,
-      type: type,
-      destination: destination,
-      time: time,
-      price: price,
-      offers: offers
-    };
+export class Waypoint extends AbstractComponent {
+  addEventListeners (creationForm, tripEventsList) {
+    const buttonUp = this.getElement.querySelector('button.event__rollup-btn');
+    buttonUp.addEventListener('click', () => {
+      tripEventsList.replaceChild(creationForm, this.getElement);
+    });
   }
 
   // date: string
@@ -66,12 +60,4 @@ export class Waypoint {
         </div>
       </li>
   `;}
-
-  get getElement () {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
 }

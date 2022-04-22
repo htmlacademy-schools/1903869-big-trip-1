@@ -1,9 +1,6 @@
-import {createElement} from '../utils';
+import { AbstractComponent } from '../abstract-view';
 
-export class Menu {
-  constuctor () {
-    this.element = null;
-  }
+export class Menu extends AbstractComponent {
 
   getTemplate () {
     return `
@@ -11,13 +8,5 @@ export class Menu {
       <a class="trip-tabs__btn trip-tabs__btn--active" href="#">Table</a>
       <a class="trip-tabs__btn" href="#">Stats</a>
     </nav>`;
-  }
-
-  get getElement () {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
   }
 }

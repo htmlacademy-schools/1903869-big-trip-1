@@ -1,9 +1,6 @@
-import {createElement} from '../utils';
+import { AbstractComponent } from '../abstract-view';
 
-export class Filters {
-  constructor () {
-    this.element = null;
-  }
+export class Filters extends AbstractComponent {
 
   getTemplate () { return `
     <form class="trip-filters" action="#" method="get">
@@ -25,12 +22,4 @@ export class Filters {
       <button class="visually-hidden" type="submit">Accept filter</button>
     </form>
   `;}
-
-  get getElement () {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
 }

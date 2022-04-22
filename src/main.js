@@ -4,10 +4,12 @@ import {Sort} from './view/sort';
 import {Waypoint} from './view/way-point';
 import {CreationForm} from './view/creation-form';
 import {createRandomWaypoint} from './way-point';
+import {emptyListElement} from './utils';
 
 const render = (component, container, place) => {
   const fragment = container.querySelector(place) || container;
-  fragment.appendChild(component);
+  const renderComponent = component.getElement || component;
+  fragment.appendChild(renderComponent);
 };
 
 const tripControls = document.querySelector('.trip-controls');
@@ -15,10 +17,10 @@ const tripEvents = document.querySelector('.trip-events');
 const tripEventsList = document.createElement('ul');
 
 const menuModel = new Menu();
-render(menuModel.getElement, tripControls, '.trip-controls__navigation');
+render(menuModel, tripControls, '.trip-controls__navigation');
 
 const filtersModel = new Filters();
-render(filtersModel.getElement, tripControls, '.trip-controls__filters');
+render(filtersModel, tripControls, '.trip-controls__filters');
 
 const waypointCount = 20;
 
@@ -29,7 +31,7 @@ if (waypointCount) {
   }
 
   const sortModel = new Sort();
-  render(sortModel.getElement, tripEvents);
+  render(sortModel, tripEvents);
 
   tripEventsList.classList.add('trip-events__list');
   render(tripEventsList, tripEvents);
@@ -38,20 +40,9 @@ if (waypointCount) {
     const creationForm = new CreationForm(waypointModels[i]);
     const waypoint = new Waypoint(waypointModels[i]);
 
-    const buttonUp = waypoint.getElement.querySelector('button.event__rollup-btn');
-    buttonUp.addEventListener('click', () => {
-      tripEventsList.replaceChild(creationForm.getElement, waypoint.getElement);
-    });
+    waypoint.addEventListeners(creationForm.getElement, tripEventsList);
 
-    const form = creationForm.getElement.querySelector('form');
-    form.addEventListener('submit', () => {
-      tripEventsList.replaceChild(waypoint.getElement, creationForm.getElement);
-    });
-
-    const buttonDown = creationForm.getElement.querySelector('button.event__rollup-btn');
-    buttonDown.addEventListener('click', () => {
-      tripEventsList.replaceChild(waypoint.getElement, creationForm.getElement);
-    });
+    creationForm.addEventListeners(waypoint.getElement, tripEventsList);
 
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && tripEventsList.contains(creationForm.getElement)) {
@@ -59,7 +50,7 @@ if (waypointCount) {
       }
     });
 
-    render(waypoint.getElement, tripEventsList);
+    render(waypoint, tripEventsList);
   }
 } else {
   render(emptyListElement, tripEvents);
