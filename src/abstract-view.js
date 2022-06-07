@@ -1,15 +1,15 @@
-import {createElement} from './utils';
+import { createElement } from './utils';
 
-export class AbstractComponent{
-  constructor (state) {
+export class AbstractComponent {
+  constructor(state) {
     if (new.target === AbstractComponent) {
-      throw new Error('Can\'t instantiate Abstract class, only concrete one.');
+      throw new Error("Can't instantiate Abstract class, only concrete one.");
     }
     this.state = state;
-    this.element = null;
+    this.element = createElement(this.getTemplate());
   }
 
-  get getElement () {
+  get getElement() {
     if (!this.element) {
       this.element = createElement(this.getTemplate());
     }
@@ -17,11 +17,13 @@ export class AbstractComponent{
     return this.element;
   }
 
-  deleteElement () {
+  deleteElement() {
     this.element = null;
   }
 
   getTemplate() {
-    throw new Error(`Abstract method not implemented: ${this.getTemplate.name}`);
+    throw new Error(
+      `Abstract method not implemented: ${this.getTemplate.name}`
+    );
   }
 }

@@ -1,21 +1,26 @@
 import { AbstractComponent } from '../abstract-view';
-import {OFFER_TYPES} from '../consts';
+import { OFFER_TYPES } from '../consts';
 
 export class CreationForm extends AbstractComponent {
-  addEventListeners (waypoint, tripEventsList) {
-    const form = this.getElement.querySelector('form');
-    form.addEventListener('submit', () => {
-      tripEventsList.replaceChild(waypoint, this.getElement);
+  setFormSubmitHandler = (callback) => {
+    this.formSubmit = callback;
+    this.element.querySelector('form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.formSubmit(this.state);
     });
+  };
 
-    const buttonDown = this.getElement.querySelector('button.event__rollup-btn');
-    buttonDown.addEventListener('click', () => {
-      tripEventsList.replaceChild(waypoint, this.getElement);
-    });
-  }
+  setRollupClickHandler = (callback) => {
+    this.element
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', (e) => {
+        e.preventDefault();
+        callback(e);
+      });
+  };
 
-  getTemplate () {
-    const {isCreationForm, destination, type, offers, price} = this.state;
+  getTemplate() {
+    const { isCreationForm, destination, type, offers, price } = this.state;
     return `
     <li class="trip-events__item">
         <form class="event event--edit" action="#" method="post">
@@ -83,7 +88,9 @@ export class CreationForm extends AbstractComponent {
               <label class="event__label  event__type-output" for="event-destination-1">
                 ${type}
               </label>
-              <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.city}" list="destination-list-1">
+              <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${
+                destination.city
+              }" list="destination-list-1">
               <datalist id="destination-list-1">
                 <option value="Amsterdam"></option>
                 <option value="Geneva"></option>
@@ -109,13 +116,19 @@ export class CreationForm extends AbstractComponent {
 
             <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
 
-            <button class="event__reset-btn" type="reset">${isCreationForm ? 'Cancel' : 'Delete'}</button>
+            <button class="event__reset-btn" type="reset">${
+              isCreationForm ? 'Cancel' : 'Delete'
+            }</button>
 
-            ${isCreationForm ? '' : `
+            ${
+              isCreationForm
+                ? ''
+                : `
               <button class="event__rollup-btn" type="button">
                 <span class="visually-hidden">Open event</span>
               </button>
-            `}
+            `
+            }
           </header>
 
           <section class="event__details">
@@ -123,28 +136,40 @@ export class CreationForm extends AbstractComponent {
               <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
               <div class="event__available-offers">
-                ${OFFER_TYPES.map((offer) => `
+                ${OFFER_TYPES.map(
+                  (offer) => `
                     <div class="event__offer-selector">
-                      <input class="event__offer-checkbox visually-hidden" id="event-offer-${offer}" type="checkbox" name="event-offer-luggage" ${offers.map((item) => item.name).includes(offer) ? 'checked' : ''}>
+                      <input class="event__offer-checkbox visually-hidden" id="event-offer-${offer}" type="checkbox" name="event-offer-luggage" ${
+                    offers.map((item) => item.name).includes(offer)
+                      ? 'checked'
+                      : ''
+                  }>
                       <label class="event__offer-label" for="event-offer-${offer}">
                         <span class="event__offer-title">${offer}</span>
                         &plus;&euro;&nbsp;
                         <span class="event__offer-price">30</span>
                       </label>
                     </div>
-                  `).join('')}
+                  `
+                ).join('')}
               </div>
             </section>
 
             <section class="event__section  event__section--destination">
               <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-              <p class="event__destination-description">${destination.description}</p>
+              <p class="event__destination-description">${
+                destination.description
+              }</p>
 
               <div class="event__photos-container">
                 <div class="event__photos-tape">
-                  ${destination.photos.map((photo) => `
+                  ${destination.photos
+                    .map(
+                      (photo) => `
                     <img class="event__photo" src="${photo}" alt="Event photo">
-                  `).join('')}
+                  `
+                    )
+                    .join('')}
                 </div>
               </div>
             </section>

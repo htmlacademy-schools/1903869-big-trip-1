@@ -3,5 +3,22 @@ export const createElement = (template) => {
   newElement.innerHTML = template;
   return newElement.firstElementChild;
 };
+export const render = (component, container, place) => {
+  const fragment = place ? container.querySelector(place) : container;
+  const renderComponent = component.getElement || component;
+  fragment.appendChild(renderComponent);
+};
 
-export const emptyListElement = createElement('<p class="trip-events__msg">Click New Event to create your first point</p>');
+export const remove = (component) => {
+  if (component === null) {
+    return;
+  }
+  component.element.remove();
+  component.deleteElement();
+};
+
+export const replace = (newElement, oldElement) => {
+  const parent = oldElement.element.parentElement;
+
+  parent.replaceChild(newElement.element, oldElement.element);
+};
