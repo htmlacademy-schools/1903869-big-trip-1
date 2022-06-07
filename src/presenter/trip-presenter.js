@@ -1,7 +1,14 @@
 import { PointsListView } from '../view/points-list';
 import { Sort } from '../view/sort';
 import PointPresenter from './point-presenter';
-import { render } from '../utils';
+import {
+  render,
+  SortType,
+  sortTaskByDay,
+  sortTaskByDuration,
+  sortTaskByPrice,
+  updateItem,
+} from '../utils';
 import { EmptyListView } from '../view/empty-list';
 
 export default class TripPresenter {
@@ -13,10 +20,14 @@ export default class TripPresenter {
 
     this.pointPresenter = new Map();
     this.tripPointsElement = mainElement;
+
+    this.sortType = SortType.DAY;
+    this.sourcedTripPoints = [];
   }
 
   init = (points) => {
     this.points = [...points];
+    this.sourcedTripPoints = [...points];
     this.renderMain();
   };
 
@@ -33,23 +44,42 @@ export default class TripPresenter {
   };
 
   handlePointChange = (updatedPoint) => {
-    const updateIndex = this.points.findIndex(
-      (item) => item.id === updatedPoint.id
-    );
-
-    this.points =
-      updateIndex === -1
-        ? this.points
-        : [
-            ...this.points.slice(0, updateIndex),
-            updatedPoint,
-            ...this.points.slice(updateIndex + 1),
-          ];
+    this.points = updateItem(this.points, updatedPoint);
+    this.sourcedTripPoints = updateItem(this.sourcedTripPoints, updatedPoint);
     this.pointPresenter.get(updatedPoint.id).init(updatedPoint);
+  };
+
+  sortTasks = (sortType) => {
+    switch (sortType) {
+      case SortType.DAY:
+        this.points.sort(sortTaskByDay);
+        break;
+      case SortType.TIME:
+        this.points.sort(sortTaskByDuration);
+        break;
+      case SortType.PRICE:
+        this.points.sort(sortTaskByPrice);
+        break;
+      default:
+        this.points = [...this.sourcedTripPoints];
+    }
+
+    this.sortType = sortType;
+  };
+
+  handleSortTypeChange = (sortType) => {
+    if (this.sortType === sortType) {
+      return;
+    }
+
+    this.sortTasks(sortType);
+    this.clearTaskList();
+    this.renderTripEventsList();
   };
 
   renderSort = () => {
     render(this.tripSortComponent, this.tripPointsElement);
+    this.tripSortComponent.setSortTypeChangeHandler(this.handleSortTypeChange);
   };
 
   renderTripEvent = (tripPoint) => {
@@ -71,6 +101,7 @@ export default class TripPresenter {
       this.renderNoTasks();
     } else {
       this.renderSort();
+      this.sortTasks(this.sortType);
       this.renderTripEventsList();
       this.renderTripEventsListElement();
     }
