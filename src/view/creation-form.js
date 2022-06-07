@@ -1,7 +1,7 @@
-import { AbstractComponent } from '../abstract-view';
+import { SmartComponent } from '../smart-view';
 import { OFFER_TYPES } from '../consts';
 
-export class CreationForm extends AbstractComponent {
+export class CreationForm extends SmartComponent {
   setFormSubmitHandler = (callback) => {
     this.formSubmit = callback;
     this.element.querySelector('form').addEventListener('submit', (e) => {
@@ -11,15 +11,106 @@ export class CreationForm extends AbstractComponent {
   };
 
   setRollupClickHandler = (callback) => {
+    this.rollupClick = callback;
     this.element
       .querySelector('.event__rollup-btn')
       .addEventListener('click', (e) => {
         e.preventDefault();
-        callback(e);
+        this.rollupClick(e);
       });
   };
 
-  getTemplate() {
+  restoreHandlers = () => {};
+
+  destinationChangeHandler = (e) => {
+    e.preventDefault();
+    this.updateData(
+      {
+        destination: this.getChangedDestination(e.target.value),
+      },
+      false
+    );
+  };
+
+  getChangedDestination = (destinationName) => {
+    const allDestinations = [];
+    const foundDestination = allDestinations.find(
+      (destination) => destination.name === destinationName
+    );
+    return (
+      foundDestination || {
+        description: null,
+        name: '',
+        pictures: [],
+      }
+    );
+  };
+
+  typeGroupClickHandler = (e) => {
+    e.preventDefault();
+    this.updateData(
+      {
+        type: e.target.value,
+      },
+      false
+    );
+  };
+
+  startTimeChangeHandler = (e) => {
+    e.preventDefault();
+    this.updateData(
+      {
+        // dateFrom: e.target.value
+      },
+      true
+    );
+  };
+
+  endTimeChangeHandler = (e) => {
+    e.preventDefault();
+    this.updateData(
+      {
+        //dateTo: e.target.value
+      },
+      true
+    );
+  };
+
+  basePriceChangeHandler = (e) => {
+    e.preventDefault();
+    this.updateData(
+      {
+        basePrice: e.target.value,
+      },
+      true
+    );
+  };
+
+  restoreHandlers = () => {
+    this.setInnerHandlers();
+    this.setRollupClickHandler(this.rollupClick);
+    this.setFormSubmitHandler(this.formSubmit);
+  };
+
+  setInnerHandlers = () => {
+    this.element
+      .querySelector('.event__type-group')
+      .addEventListener('change', this.typeGroupClickHandler);
+    this.element
+      .querySelector('.event__input--destination')
+      .addEventListener('change', this.destinationChangeHandler);
+    this.element
+      .querySelector('.event__input-start-time')
+      .addEventListener('change', this.startTimeChangeHandler);
+    this.element
+      .querySelector('.event__input-end-time')
+      .addEventListener('change', this.endTimeChangeHandler);
+    this.element
+      .querySelector('.event__input--price')
+      .addEventListener('change', this.basePriceChangeHandler);
+  };
+
+  getTemplate = () => {
     const { isCreationForm, destination, type, offers, price } = this.state;
     return `
     <li class="trip-events__item">
@@ -176,5 +267,5 @@ export class CreationForm extends AbstractComponent {
           </section>
         </form>
       </li>`;
-  }
+  };
 }
