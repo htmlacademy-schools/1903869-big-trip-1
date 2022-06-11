@@ -1,17 +1,16 @@
-import { AbstractComponent } from '../abstract-view';
+import { AbstractComponent } from './abstract-view';
 import { SortType } from '../utils';
 
 export class Sort extends AbstractComponent {
   setSortTypeChangeHandler = (callback) => {
-    this.element.addEventListener('change', (e) => {
+    this.getElement.addEventListener('change', (e) => {
       e.preventDefault();
       callback(e.target.dataset.sortType);
     });
   };
 
-  getTemplate() {
-    return `
-    <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+  get getTemplate() {
+    return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       <div class="trip-sort__item  trip-sort__item--day">
         <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day" data-sort-type="${SortType.DAY}">
         <label class="trip-sort__btn" for="sort-day">Day</label>

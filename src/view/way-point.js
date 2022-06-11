@@ -1,37 +1,58 @@
 import dayjs from 'dayjs';
-import { AbstractComponent } from '../abstract-view';
+import { AbstractComponent } from './abstract-view';
+
+const createOffers = (offers) =>
+  offers
+    .map(
+      (offer) => `<li class="event__offer">
+  <span class="event__offer-title">${offer.name}</span>
+  &plus;&euro;&nbsp;
+  <span class="event__offer-price">${offer.price}</span>
+</li>`
+    )
+    .join('');
 
 export class Waypoint extends AbstractComponent {
-  setEditClickHandler(callback) {
-    this.element
+  setEditClickHandler = (callback) => {
+    this.editClick = callback;
+    this.getElement
       .querySelector('.event__rollup-btn')
-      .addEventListener('click', (e) => {
-        e.preventDefault();
-        callback(e);
-      });
-  }
+      .addEventListener('click', this.editClickHandler);
+  };
 
-  setFavoriteClickHandler(callback) {
-    this.element
+  editClickHandler = (e) => {
+    e.preventDefault();
+    this.editClick();
+  };
+
+  setFavoriteClickHandler = (callback) => {
+    this.favoriteClick = callback;
+    this.getElement
       .querySelector('.event__favorite-btn')
-      .addEventListener('click', (e) => {
-        e.preventDefault();
-        callback(e);
-      });
-  }
+      .addEventListener('click', this.favoriteClickHandler);
+  };
 
-  // date: string
-  // event: string
-  // time: {start: string, end: string}
-  // price: string
-  // offers: {title: string, price: string}[]
-  getTemplate() {
-    const { date, type, destination, time, price, offers, isFavorite } =
-      this.state;
+  favoriteClickHandler = (e) => {
+    e.preventDefault();
+    this.favoriteClick(e);
+  };
+
+  get getTemplate() {
+    const {
+      date,
+      type,
+      destination,
+      timeStart,
+      timeEnd,
+      price,
+      offers,
+      isFavorite,
+    } = this.state;
 
     const isFavoriteClass = isFavorite ? ' event__favorite-btn--active' : '';
-    return `
-      <li class="trip-events__item">
+    const offersMarkup = createOffers(offers);
+
+    return `<li class="trip-events__item">
         <div class="event">
           <time class="event__date" datetime="${dayjs(date).format(
             'YYYY-MM-DD'
@@ -43,19 +64,19 @@ export class Waypoint extends AbstractComponent {
           <div class="event__schedule">
             <p class="event__time">
               <time class="event__start-time" datetime="${dayjs(
-                time.start
+                timeStart
               ).format('YYYY-MM-DDThh:mm')}">
-                ${dayjs(time.start).format('hh:mm')}
+                ${dayjs(timeStart).format('hh:mm')}
               </time>
               &mdash;
-              <time class="event__end-time" datetime="${dayjs(time.end).format(
+              <time class="event__end-time" datetime="${dayjs(timeEnd).format(
                 'YYYY-MM-DDThh:mm'
               )}">
-                ${dayjs(time.end).format('hh:mm')}
+                ${dayjs(timeEnd).format('hh:mm')}
               </time>
             </p>
-            <p class="event__duration">${dayjs(time.end).diff(
-              time.start,
+            <p class="event__duration">${dayjs(timeEnd).diff(
+              timeStart,
               'minutes'
             )}M</p>
           </div>
@@ -63,18 +84,7 @@ export class Waypoint extends AbstractComponent {
             &euro;&nbsp;<span class="event__price-value">${price}</span>
           </p>
           <h4 class="visually-hidden">Offers:</h4>
-          <ul class="event__selected-offers">
-            ${offers
-              .map(
-                (offer) => `
-              <li class="event__offer">
-                <span class="event__offer-title">${offer.name}</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">${offer.price}</span>
-              </li>`
-              )
-              .join('')}
-          </ul>
+          <ul class="event__selected-offers">${offersMarkup}</ul>
           <button class="event__favorite-btn${isFavoriteClass}" type="button">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">

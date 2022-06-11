@@ -1,5 +1,5 @@
-import { Menu } from './view/menu';
-import { Filters } from './view/filters';
+import { TripTabs } from './view/trip-tabs';
+import { TripFilters } from './view/trip-filters';
 import { createRandomWaypoint } from './way-point';
 import { render } from './utils';
 import TripPresenter from './presenter/trip-presenter';
@@ -7,11 +7,8 @@ import TripPresenter from './presenter/trip-presenter';
 const pageMainElement = document.querySelector('.trip-events');
 const tripControls = document.querySelector('.trip-controls');
 
-const menuModel = new Menu();
-render(menuModel, tripControls, '.trip-controls__navigation');
-
-const filtersModel = new Filters();
-render(filtersModel, tripControls, '.trip-controls__filters');
+render(new TripTabs(), tripControls, '.trip-controls__navigation');
+render(new TripFilters(), tripControls, '.trip-controls__filters');
 
 const waypointCount = 20;
 const points = [];

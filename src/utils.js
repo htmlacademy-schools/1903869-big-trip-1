@@ -25,27 +25,32 @@ export const sortTaskByPrice = (pointA, pointB) => {
 export const createElement = (template) => {
   const newElement = document.createElement('div');
   newElement.innerHTML = template;
-  return newElement.firstElementChild;
+
+  return newElement.firstChild;
 };
 
 export const render = (component, container, place) => {
-  const fragment = place ? container.querySelector(place) : container;
+  const containerChild = container.getElement || container;
+  const fragment = place ? containerChild.querySelector(place) : containerChild;
   const renderComponent = component.getElement || component;
-  fragment.appendChild(renderComponent);
+
+  fragment.append(renderComponent);
 };
 
 export const remove = (component) => {
   if (component === null) {
     return;
   }
-  component.element.remove();
+  component.getElement.remove();
   component.deleteElement();
 };
 
 export const replace = (newElement, oldElement) => {
-  const parent = oldElement.element.parentElement;
+  const newChild = newElement.getElement || newElement;
+  const oldChild = oldElement.getElement || oldElement;
+  const parent = oldChild.parentElement;
 
-  parent.replaceChild(newElement.element, oldElement.element);
+  parent.replaceChild(newChild, oldChild);
 };
 
 export const updateItem = (items, update) => {

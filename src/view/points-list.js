@@ -1,7 +1,7 @@
-import { AbstractComponent } from '../abstract-view';
+import { AbstractComponent } from './abstract-view';
 
 export class PointsListView extends AbstractComponent {
-  getTemplate() {
+  get getTemplate() {
     return '<ul class="trip-events__list"></ul>';
   }
 }

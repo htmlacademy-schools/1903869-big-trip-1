@@ -28,13 +28,15 @@ export default class PointPresenter {
 
     this.pointItemComponent.setEditClickHandler(this.handleEditClick);
     this.pointItemComponent.setFavoriteClickHandler(this.handleFavoriteClick);
+
     this.pointEditComponent.setRollupClickHandler(this.handleRollupClick);
     this.pointEditComponent.setFormSubmitHandler(this.handleFormSubmit);
+    this.pointEditComponent.restoreHandlers();
 
     if (prevPointItemComponent === null || prevPointEditComponent === null) {
       return render(
         this.pointItemComponent,
-        this.tripPointsListElement.element
+        this.tripPointsListElement.getElement
       );
     }
 
