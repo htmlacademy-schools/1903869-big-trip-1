@@ -1,28 +1,118 @@
-import { AbstractComponent } from '../abstract-view';
+import { SmartComponent } from './smart-view';
 import { OFFER_TYPES } from '../consts';
 
-export class CreationForm extends AbstractComponent {
+export class CreationForm extends SmartComponent {
   setFormSubmitHandler = (callback) => {
     this.formSubmit = callback;
-    this.element.querySelector('form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      this.formSubmit(this.state);
-    });
+    this.getElement.querySelector('form').addEventListener('submit', this.formSubmitHandler);
   };
 
   setRollupClickHandler = (callback) => {
-    this.element
+    this.rollupClick = callback;
+    this.getElement
       .querySelector('.event__rollup-btn')
-      .addEventListener('click', (e) => {
-        e.preventDefault();
-        callback(e);
-      });
+      .addEventListener('click', this.rollupClickHandler);
   };
 
-  getTemplate() {
-    const { isCreationForm, destination, type, offers, price } = this.state;
-    return `
-    <li class="trip-events__item">
+  formSubmitHandler = (e) => {
+    e.preventDefault();
+    this.formSubmit(this.state);
+  }
+
+  rollupClickHandler = (e) => {
+    e.preventDefault();
+    this.rollupClick();
+  }
+
+  typeGroupClickHandler = (e) => {
+    e.preventDefault();
+    this.updateData(
+      {
+        type: e.target.value,
+      },
+      false
+    );
+  };
+
+  startTimeChangeHandler = (e) => {
+    e.preventDefault();
+    this.updateData(
+      {
+        timeStart: e.target.value
+      },
+      true
+    );
+  };
+
+  endTimeChangeHandler = (e) => {
+    e.preventDefault();
+    this.updateData(
+      {
+        timeEnd: e.target.value
+      },
+      true
+    );
+  };
+
+  basePriceChangeHandler = (e) => {
+    e.preventDefault();
+    this.updateData(
+      {
+        price: parseInt(e.target.value),
+      },
+      true
+    );
+  };
+
+  destinationChangeHandler = (e) => {
+    e.preventDefault();
+    this.updateData(
+      {
+        destination: this.getChangedDestination(e.target.value),
+      },
+      false
+    );
+  };
+
+  getChangedDestination = (destinationName) => {
+    const allDestinations = [];
+    const foundDestination = allDestinations.find((destination) => destination.name === destinationName);
+    return (
+      foundDestination || {
+        description: null,
+        name: '',
+        pictures: [],
+      }
+    );
+  };
+
+  restoreHandlers = () => {
+    this.setInnerHandlers();
+    this.setRollupClickHandler(this.rollupClick);
+    this.setFormSubmitHandler(this.formSubmit);
+  };
+
+  setInnerHandlers = () => {
+    this.getElement
+      .querySelector('.event__type-group')
+      .addEventListener('change', this.typeGroupClickHandler);
+    this.getElement
+      .querySelector('.event__input--destination')
+      .addEventListener('change', this.destinationChangeHandler);
+    this.getElement
+      .querySelector('.event__input--time[name=event-start-time]')
+      .addEventListener('change', this.startTimeChangeHandler);
+    this.getElement
+      .querySelector('.event__input--time[name=event-end-time]')
+      .addEventListener('change', this.endTimeChangeHandler);
+    this.getElement
+      .querySelector('.event__input--price')
+      .addEventListener('change', this.basePriceChangeHandler);
+  };
+
+  get getTemplate() {
+    const { isCreationForm, destination, type, offers, price, timeStart, timeEnd } = this.state;
+    return `<li class="trip-events__item">
         <form class="event event--edit" action="#" method="post">
           <header class="event__header">
             <div class="event__type-wrapper">
@@ -88,9 +178,7 @@ export class CreationForm extends AbstractComponent {
               <label class="event__label  event__type-output" for="event-destination-1">
                 ${type}
               </label>
-              <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${
-                destination.city
-              }" list="destination-list-1">
+              <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.city}" list="destination-list-1">
               <datalist id="destination-list-1">
                 <option value="Amsterdam"></option>
                 <option value="Geneva"></option>
@@ -100,10 +188,10 @@ export class CreationForm extends AbstractComponent {
 
             <div class="event__field-group  event__field-group--time">
               <label class="visually-hidden" for="event-start-time-1">From</label>
-              <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="19/03/19 00:00">
+              <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${timeStart}">
               &mdash;
               <label class="visually-hidden" for="event-end-time-1">To</label>
-              <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="19/03/19 00:00">
+              <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${timeEnd}">
             </div>
 
             <div class="event__field-group  event__field-group--price">
@@ -116,19 +204,9 @@ export class CreationForm extends AbstractComponent {
 
             <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
 
-            <button class="event__reset-btn" type="reset">${
-              isCreationForm ? 'Cancel' : 'Delete'
-            }</button>
+            <button class="event__reset-btn" type="reset">${isCreationForm ? 'Cancel' : 'Delete'}</button>
 
-            ${
-              isCreationForm
-                ? ''
-                : `
-              <button class="event__rollup-btn" type="button">
-                <span class="visually-hidden">Open event</span>
-              </button>
-            `
-            }
+            ${isCreationForm ? '' : `<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>`}
           </header>
 
           <section class="event__details">
@@ -136,45 +214,29 @@ export class CreationForm extends AbstractComponent {
               <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
               <div class="event__available-offers">
-                ${OFFER_TYPES.map(
-                  (offer) => `
-                    <div class="event__offer-selector">
-                      <input class="event__offer-checkbox visually-hidden" id="event-offer-${offer}" type="checkbox" name="event-offer-luggage" ${
-                    offers.map((item) => item.name).includes(offer)
-                      ? 'checked'
-                      : ''
-                  }>
-                      <label class="event__offer-label" for="event-offer-${offer}">
-                        <span class="event__offer-title">${offer}</span>
-                        &plus;&euro;&nbsp;
-                        <span class="event__offer-price">30</span>
-                      </label>
-                    </div>
-                  `
-                ).join('')}
+                ${OFFER_TYPES.map((offer) => `<div class="event__offer-selector">
+                  <input class="event__offer-checkbox visually-hidden" id="event-offer-${offer}" type="checkbox" name="event-offer-luggage" ${offers.map((item) => item.name).includes(offer) ? 'checked' : ''}>
+                  <label class="event__offer-label" for="event-offer-${offer}">
+                    <span class="event__offer-title">${offer}</span>
+                    &plus;&euro;&nbsp;
+                    <span class="event__offer-price">30</span>
+                  </label>
+                </div>`).join('')}
               </div>
             </section>
 
             <section class="event__section  event__section--destination">
               <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-              <p class="event__destination-description">${
-                destination.description
-              }</p>
+              <p class="event__destination-description">${destination.description}</p>
 
               <div class="event__photos-container">
                 <div class="event__photos-tape">
-                  ${destination.photos
-                    .map(
-                      (photo) => `
-                    <img class="event__photo" src="${photo}" alt="Event photo">
-                  `
-                    )
-                    .join('')}
+                  ${destination.photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join('')}
                 </div>
               </div>
             </section>
           </section>
         </form>
       </li>`;
-  }
+  };
 }
