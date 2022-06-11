@@ -38,47 +38,44 @@ export class Waypoint extends AbstractComponent {
   };
 
   get getTemplate() {
-    const {
-      date,
-      type,
-      destination,
-      timeStart,
-      timeEnd,
-      price,
-      offers,
-      isFavorite,
-    } = this.state;
+    const { type, destination, timeStart, timeEnd, price, offers, isFavorite } =
+      this.state;
 
     const isFavoriteClass = isFavorite ? ' event__favorite-btn--active' : '';
     const offersMarkup = createOffers(offers);
-
     return `<li class="trip-events__item">
         <div class="event">
-          <time class="event__date" datetime="${dayjs(date).format(
-            'YYYY-MM-DD'
-          )}">${dayjs(date).format(' MMM D')}</time>
+          <time
+            class="event__date"
+            datetime="${dayjs(timeStart).format('YYYY-MM-DD')}"
+          >
+            ${dayjs(timeStart).format(' MMM D')}
+          </time>
           <div class="event__type">
             <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
           </div>
           <h3 class="event__title">${type} ${destination.city}</h3>
           <div class="event__schedule">
             <p class="event__time">
-              <time class="event__start-time" datetime="${dayjs(
-                timeStart
-              ).format('YYYY-MM-DDThh:mm')}">
+              <time
+                class="event__start-time"
+                datetime="${dayjs(timeStart).format('YYYY-MM-DDThh:mm')}"
+              >
                 ${dayjs(timeStart).format('hh:mm')}
               </time>
               &mdash;
-              <time class="event__end-time" datetime="${dayjs(timeEnd).format(
-                'YYYY-MM-DDThh:mm'
-              )}">
+              <time
+                class="event__end-time"
+                datetime="${dayjs(timeEnd).format('YYYY-MM-DDThh:mm')}"
+              >
                 ${dayjs(timeEnd).format('hh:mm')}
               </time>
             </p>
-            <p class="event__duration">${dayjs(timeEnd).diff(
-              timeStart,
-              'minutes'
-            )}M</p>
+            <p
+              class="event__duration"
+            >
+              ${dayjs(timeEnd).diff(timeStart, 'minutes')}M
+            </p>
           </div>
           <p class="event__price">
             &euro;&nbsp;<span class="event__price-value">${price}</span>

@@ -62,9 +62,8 @@ export const createWaypointModel = ({ type, destination, offers = [] }) => ({
   type,
   offers,
   destination,
-  date: '2022-01-01',
-  timeStart: '2022/01/01 10:30',
-  timeEnd: '2022/01/01 11:30',
+  timeStart: '01/01/22 10:30',
+  timeEnd: '02/01/22 11:30',
   isFavorite: false,
   price: Math.round(Math.random() * 300),
 });
