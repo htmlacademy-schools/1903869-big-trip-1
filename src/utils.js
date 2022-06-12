@@ -37,6 +37,14 @@ export const render = (component, container, place) => {
   fragment.append(renderComponent);
 };
 
+export const renderBefore = (component, container, place) => {
+  const containerChild = container.getElement || container;
+  const fragment = place ? containerChild.querySelector(place) : containerChild;
+  const renderComponent = component.getElement || component;
+
+  fragment.prepend(renderComponent);
+};
+
 export const remove = (component) => {
   if (component === null) {
     return;
@@ -67,4 +75,30 @@ export const SortType = {
   DAY: 'sort-day',
   TIME: 'sort-time',
   PRICE: 'sort-price',
+};
+
+export const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PAST: 'past',
+};
+
+export const filter = {
+  [FilterType.EVERYTHING]: (points) => [...points].filter((point) => point),
+  [FilterType.FUTURE]: (points) =>
+    [...points].filter((point) => new Date(point.timeStart) > new Date()),
+  [FilterType.PAST]: (points) =>
+    [...points].filter((point) => new Date(point.timeEnd) < new Date()),
+};
+
+export const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+export const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
 };
