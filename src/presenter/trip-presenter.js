@@ -187,5 +187,18 @@ export default class TripPresenter {
     this.pointNewPresenter.destroy();
     this.pointPresenter.forEach((presenter) => presenter.destroy());
     this.pointPresenter.clear();
+
+    remove(this.sortComponent);
+    remove(this.tripEventsListElement);
+    if (this.noTripPointComponent) {
+      remove(this.noTripPointComponent);
+    }
+  };
+
+  destroy = () => {
+    this.clearTaskList(true);
+
+    this.pointsModel.removeObserver(this.handleModelEvent);
+    this.filterModel.removeObserver(this.handleModelEvent);
   };
 }

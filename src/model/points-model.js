@@ -15,7 +15,7 @@ export default class PointsModel extends AbstractObservable {
     const index = this.points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
-      throw new Error("Can't update unexisting point");
+      throw new Error('Can\'t update unexisting point');
     }
 
     this.points = [
@@ -37,7 +37,7 @@ export default class PointsModel extends AbstractObservable {
     const index = this.points.findIndex((task) => task.id === update.id);
 
     if (index === -1) {
-      throw new Error("Can't delete unexisting point");
+      throw new Error('Can\'t delete unexisting point');
     }
 
     this.points = [

@@ -1,5 +1,5 @@
 import { TripFilters } from '../view/trip-filters';
-import { render, replace, remove, UpdateType } from '../utils';
+import { render, replace, remove, UpdateType, FilterType } from '../utils';
 
 export default class FilterPresenter {
   filterContainer = null;
@@ -55,5 +55,14 @@ export default class FilterPresenter {
     }
 
     this.filterModel.setFilter(UpdateType.MAJOR, filterType);
+  };
+
+  destroy = () => {
+    remove(this.filterComponent);
+    this.filterComponent = null;
+
+    this.filterModel.removeObserver(this.handleModelEvent);
+
+    this.filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
   };
 }
