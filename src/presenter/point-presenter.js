@@ -1,6 +1,6 @@
 import { Waypoint } from '../view/way-point';
 import { CreationForm } from '../view/creation-form';
-import { render, remove, replace } from '../utils';
+import { render, remove, replace, UserAction, UpdateType } from '../utils';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -95,14 +95,14 @@ export default class PointPresenter {
   };
 
   handleFavoriteClick = () => {
-    this.changeData({
+    this.changeData(UserAction.ADD_POINT, UpdateType.MINOR, {
       ...this.tripPoint,
       isFavorite: !this.tripPoint.isFavorite,
     });
   };
 
   handleFormSubmit = (point) => {
-    this.changeData(point);
+    this.changeData(UserAction.ADD_POINT, UpdateType.MINOR, point);
     this.replaceFormToItem();
   };
 }

@@ -3,7 +3,7 @@ import { createElement } from '../utils';
 export class AbstractComponent {
   constructor(state) {
     if (new.target === AbstractComponent) {
-      throw new Error("Can't instantiate Abstract class, only concrete one.");
+      throw new Error('Can\'t instantiate Abstract class, only concrete one.');
     }
     this.state = state;
   }

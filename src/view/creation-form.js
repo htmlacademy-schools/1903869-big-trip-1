@@ -252,11 +252,7 @@ export class CreationForm extends SmartComponent {
               ${isCreationForm ? 'Cancel' : 'Delete'}
             </button>
 
-            ${
-              isCreationForm
-                ? ''
-                : '<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>'
-            }
+            ${isCreationForm ? '': '<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>'}
           </header>
 
           <section class="event__details">
@@ -264,20 +260,14 @@ export class CreationForm extends SmartComponent {
               <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
               <div class="event__available-offers">
-                ${OFFER_TYPES.map(
-                  (offer) => `<div class="event__offer-selector">
-                  <input class="event__offer-checkbox visually-hidden" id="event-offer-${offer}" type="checkbox" name="event-offer-luggage" ${
-                    offers.map((item) => item.name).includes(offer)
-                      ? 'checked'
-                      : ''
-                  }>
+                ${OFFER_TYPES.map((offer) => `<div class="event__offer-selector">
+                  <input class="event__offer-checkbox visually-hidden" id="event-offer-${offer}" type="checkbox" name="event-offer-luggage" ${offers.map((item) => item.name).includes(offer)? 'checked': ''}>
                   <label class="event__offer-label" for="event-offer-${offer}">
                     <span class="event__offer-title">${offer}</span>
                     &plus;&euro;&nbsp;
                     <span class="event__offer-price">30</span>
                   </label>
-                </div>`
-                ).join('')}
+                </div>`).join('')}
               </div>
             </section>
 
@@ -289,12 +279,7 @@ export class CreationForm extends SmartComponent {
 
               <div class="event__photos-container">
                 <div class="event__photos-tape">
-                  ${destination.photos
-                    .map(
-                      (photo) =>
-                        `<img class="event__photo" src="${photo}" alt="Event photo">`
-                    )
-                    .join('')}
+                  ${destination.photos.map((photo) =>`<img class="event__photo" src="${photo}" alt="Event photo">`).join('')}
                 </div>
               </div>
             </section>
