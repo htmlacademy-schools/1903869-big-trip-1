@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import { remove, renderBefore, UserAction, UpdateType } from '../utils';
 import { CreationForm } from '../view/creation-form';
 
@@ -6,26 +5,35 @@ export default class PointNewPresenter {
   pointListContainer = null;
   changeData = null;
   pointAddComponent = null;
+  destinations = null;
+  offers = null;
 
   constructor(pointListContainer, changeData) {
     this.pointListContainer = pointListContainer;
     this.changeData = changeData;
   }
 
-  init = () => {
+  init = (destinations, offers) => {
     if (this.pointAddComponent !== null) {
       return;
     }
+    this.destinations = destinations;
+    this.offers = offers;
+    const data = {
+      tripPoint: {
+        isCreationForm: true,
+        destination: { photos: [] },
+        type: '',
+        price: '',
+        timeStart: '',
+        timeEnd: '',
+      },
+      destinations,
+      offers,
+    };
+    console.log(data);
 
-    this.pointAddComponent = new CreationForm({
-      isCreationForm: true,
-      destination: { photos: [] },
-      type: '',
-      offers: [],
-      price: '',
-      timeStart: '',
-      timeEnd: '',
-    });
+    this.pointAddComponent = new CreationForm(data);
     this.pointAddComponent.setFormSubmitHandler(this.handleFormSubmit);
     this.pointAddComponent.setDeleteClickHandler(this.handleDeleteClick);
 
@@ -46,10 +54,7 @@ export default class PointNewPresenter {
   };
 
   handleFormSubmit = (task) => {
-    this.changeData(UserAction.ADD_POINT, UpdateType.MINOR, {
-      id: nanoid(),
-      ...task,
-    });
+    this.changeData(UserAction.ADD_POINT, UpdateType.MINOR, task);
     this.destroy();
   };
 

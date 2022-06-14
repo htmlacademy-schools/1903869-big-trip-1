@@ -8,13 +8,21 @@ const Mode = {
 };
 
 export default class PointPresenter {
-  constructor(tripPointsListElement, changeData, changeMode) {
+  constructor(
+    tripPointsListElement,
+    changeData,
+    changeMode,
+    destinations,
+    offers
+  ) {
     this.mode = Mode.DEFAULT;
     this.tripPointsListElement = tripPointsListElement;
     this.changeData = changeData;
     this.changeMode = changeMode;
     this.pointItemComponent = null;
     this.pointEditComponent = null;
+    this.destinations = destinations;
+    this.offers = offers;
   }
 
   init = (tripPoint) => {
@@ -24,7 +32,11 @@ export default class PointPresenter {
     const prevPointEditComponent = this.pointEditComponent;
 
     this.pointItemComponent = new Waypoint(tripPoint);
-    this.pointEditComponent = new CreationForm(tripPoint);
+    this.pointEditComponent = new CreationForm({
+      tripPoint,
+      destination: this.destinations,
+      offers: this.offers,
+    });
 
     this.pointItemComponent.setEditClickHandler(this.handleEditClick);
     this.pointItemComponent.setFavoriteClickHandler(this.handleFavoriteClick);

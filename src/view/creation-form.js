@@ -1,5 +1,4 @@
 import { SmartComponent } from './smart-view';
-import { OFFER_TYPES } from '../consts';
 import flatpickr from 'flatpickr';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
@@ -21,7 +20,7 @@ export class CreationForm extends SmartComponent {
 
   formSubmitHandler = (e) => {
     e.preventDefault();
-    this.formSubmit(this.state);
+    this.formSubmit(this.state.tripPoint);
   };
 
   rollupClickHandler = (e) => {
@@ -106,7 +105,7 @@ export class CreationForm extends SmartComponent {
       {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
-        defaultDate: this.state.timeStart,
+        defaultDate: this.state.tripPoint.timeStart,
         onChange: this.startTimeChangeHandler,
       }
     );
@@ -116,7 +115,7 @@ export class CreationForm extends SmartComponent {
       {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
-        defaultDate: this.state.timeEnd,
+        defaultDate: this.state.tripPoint.timeEnd,
         onChange: this.endTimeChangeHandler,
       }
     );
@@ -136,74 +135,75 @@ export class CreationForm extends SmartComponent {
 
   setDeleteClickHandler = () => {};
 
+  createPointTypesMarkup = (offers, chosenPointType) => {
+    const createTypeMarkup = (offer) => {
+      const isChecked = offer.type === chosenPointType ? 'checked=""' : '';
+      const label = offer.type.charAt(0).toUpperCase() + offer.type.slice(1);
+
+      return `<div class="event__type-item">
+        <input id="event-type-${offer.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}" ${isChecked}>
+        <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-1">${label}</label>
+        </div>`;
+    };
+    return offers.map(createTypeMarkup).join('');
+  };
+
+  createOffersSectionMarkup = (offersByTypes, pointType) => {
+    const createOfferMarkup = (offer) => `<div class="event__available-offers">
+      <div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${pointType}-1" type="checkbox" name="event-offer-${pointType}">
+        <label class="event__offer-label" for="event-offer-name-1">
+          <span class="event__offer-title">${offer.title}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${offer.price}</span>
+        </label>
+      </div>`;
+
+    let offersByCurrentType = [];
+    for (let i = 0; i < offersByTypes.length; i++) {
+      if (offersByTypes[i].type === pointType) {
+        offersByCurrentType = offersByTypes[i].offers;
+      }
+    }
+
+    const offersMarkup = offersByCurrentType.map(createOfferMarkup).join('');
+    if (offersByCurrentType.length !== 0) {
+      return `<section class="event__section  event__section--offers">
+        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+        ${offersMarkup}</section>`;
+    }
+    return '';
+  };
+
   get getTemplate() {
-    const {
-      isCreationForm,
-      destination,
-      type,
-      offers,
-      price,
-      timeStart,
-      timeEnd,
-    } = this.state;
+    const { isCreationForm, destination, type, price, timeStart, timeEnd } =
+      this.state.tripPoint;
+    const destinations = this.state.destination;
+    const pointOffers = this.state.offers;
+
+    const pointTypesMarkup = this.createPointTypesMarkup(pointOffers, type);
+    const editedOffersMarkup = this.createOffersSectionMarkup(
+      pointOffers,
+      type
+    );
+    const destinationOptions = destinations
+      .map((x) => `<option value="${x.name}"></option>`)
+      .join('');
+
     return `<li class="trip-events__item">
         <form class="event event--edit" action="#" method="post">
           <header class="event__header">
             <div class="event__type-wrapper">
               <label class="event__type  event__type-btn" for="event-type-toggle-1">
                 <span class="visually-hidden">Choose event type</span>
-                <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
+                <img class="event__type-icon" width="17" height="17" src="img/icons/${type?.toLowerCase()}.png" alt="Event type icon">
               </label>
               <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
               <div class="event__type-list">
                 <fieldset class="event__type-group">
                   <legend class="visually-hidden">Event type</legend>
-
-                  <div class="event__type-item">
-                    <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
-                    <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-                  </div>
-
-                  <div class="event__type-item">
-                    <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
-                    <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-                  </div>
-
-                  <div class="event__type-item">
-                    <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
-                    <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-                  </div>
-
-                  <div class="event__type-item">
-                    <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
-                    <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-                  </div>
-
-                  <div class="event__type-item">
-                    <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
-                    <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-                  </div>
-
-                  <div class="event__type-item">
-                    <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
-                    <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-                  </div>
-
-                  <div class="event__type-item">
-                    <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
-                    <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-                  </div>
-
-                  <div class="event__type-item">
-                    <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
-                    <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-                  </div>
-
-                  <div class="event__type-item">
-                    <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
-                    <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-                  </div>
+                  ${pointTypesMarkup}
                 </fieldset>
               </div>
             </div>
@@ -221,9 +221,7 @@ export class CreationForm extends SmartComponent {
                 list="destination-list-1"
               >
               <datalist id="destination-list-1">
-                <option value="Amsterdam"></option>
-                <option value="Geneva"></option>
-                <option value="Chamonix"></option>
+                ${destinationOptions}
               </datalist>
             </div>
 
@@ -252,24 +250,15 @@ export class CreationForm extends SmartComponent {
               ${isCreationForm ? 'Cancel' : 'Delete'}
             </button>
 
-            ${isCreationForm ? '': '<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>'}
+            ${
+              isCreationForm
+                ? ''
+                : '<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>'
+            }
           </header>
 
           <section class="event__details">
-            <section class="event__section  event__section--offers">
-              <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-              <div class="event__available-offers">
-                ${OFFER_TYPES.map((offer) => `<div class="event__offer-selector">
-                  <input class="event__offer-checkbox visually-hidden" id="event-offer-${offer}" type="checkbox" name="event-offer-luggage" ${offers.map((item) => item.name).includes(offer)? 'checked': ''}>
-                  <label class="event__offer-label" for="event-offer-${offer}">
-                    <span class="event__offer-title">${offer}</span>
-                    &plus;&euro;&nbsp;
-                    <span class="event__offer-price">30</span>
-                  </label>
-                </div>`).join('')}
-              </div>
-            </section>
+            ${editedOffersMarkup}
 
             <section class="event__section  event__section--destination">
               <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -279,7 +268,12 @@ export class CreationForm extends SmartComponent {
 
               <div class="event__photos-container">
                 <div class="event__photos-tape">
-                  ${destination.photos.map((photo) =>`<img class="event__photo" src="${photo}" alt="Event photo">`).join('')}
+                  ${destination.pictures
+                    .map(
+                      (photo) =>
+                        `<img class="event__photo" src="${photo.src}" alt="Event photo">`
+                    )
+                    .join('')}
                 </div>
               </div>
             </section>
