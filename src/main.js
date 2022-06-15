@@ -1,11 +1,14 @@
 import { StatsView } from './view/chart-view';
 import { TripTabs } from './view/trip-tabs';
-import { createRandomWaypoint } from './way-point';
 import { render, remove, MenuItem } from './utils';
 import TripPresenter from './presenter/trip-presenter';
-import PointsModel from './model/points-model.js';
+import PointsModel from './model/points-model';
 import FilterModel from './model/filter-model';
 import FilterPresenter from './presenter/filter-presenter';
+import ApiService from './api-service';
+
+const AUTHORIZATION = 'Basic lololoshkaOfficial';
+const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
 
 const pageMainElement = document.querySelector('.trip-events');
 const tripControls = document.querySelector('.trip-controls');
@@ -14,20 +17,16 @@ const siteTabs = new TripTabs();
 
 render(siteTabs, tripControls, '.trip-controls__navigation');
 
-const waypointCount = 20;
-const points = [];
-for (let i = 0; i < waypointCount; i++) {
-  points.push(createRandomWaypoint());
-}
+const apiService = new ApiService(END_POINT, AUTHORIZATION);
 
 const filterModel = new FilterModel();
-const pointsModel = new PointsModel();
-pointsModel.points = points;
+const pointsModel = new PointsModel(apiService);
 
 const tripPresenter = new TripPresenter(
   pageMainElement,
   pointsModel,
-  filterModel
+  filterModel,
+  apiService
 );
 const filterPresenter = new FilterPresenter(tripControls, filterModel);
 
